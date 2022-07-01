@@ -15,7 +15,7 @@ app.use(function(req, res, next) {
 var mysql      = require('mysql');
 var connection = mysql.createConnection({
   host     : 'localhost',
-  user     : 'julias',
+  user     : 'juliaj',
   password : '1234',
   database : 'jyv',
   port: 3306
@@ -25,7 +25,7 @@ var connection = mysql.createConnection({
 app.get('/emprestimos', (req, res) => {
 
  
-  connection.query('SELECT * FROM emprestimos', function (error, results, fields) {
+  connection.query('SELECT * FROM emprestimos order by status = 0, status = 2 desc;', function (error, results, fields) {
       if (error) throw error;
      res.send(results);
 
@@ -55,6 +55,28 @@ app.get('/emprestimos', (req, res) => {
       if (error){
         res.send(error)
         res.status(500)
+        return
+      };
+      res.send(results);
+    });
+     
+  
+  })
+
+
+  app.put('/emprestimos/:id_emprestimos/:status', (req, res) => {
+
+    const id_emprestimos = req.params.id_emprestimos;
+    const status = req.params.status;
+
+    const query =`update emprestimos set status = ${status} where id_emprestimos = ${id_emprestimos};`;
+
+     
+    connection.query( query, function (error, results, fields) {
+      if (error){
+        res.send(error)
+        res.status(500)
+        return
       };
       res.send(results);
     });
